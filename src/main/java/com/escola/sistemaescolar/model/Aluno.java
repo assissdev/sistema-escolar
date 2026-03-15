@@ -1,6 +1,8 @@
 package com.escola.sistemaescolar.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 @Table(name = "alunos")
@@ -10,12 +12,13 @@ public class Aluno {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String nome;
-
     private Integer idade;
-
     private String telefone;
+
+    @ManyToOne
+    @JoinColumn(name = "turma_id")
+    private Turma turma;
 
     public Aluno() {
     }
