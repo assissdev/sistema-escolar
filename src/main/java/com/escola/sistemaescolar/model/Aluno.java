@@ -6,25 +6,24 @@ import jakarta.persistence.JoinColumn;
 
 @Entity
 @Table(name = "alunos")
-
 public class Aluno {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nome;
     private Integer idade;
     private String telefone;
 
-    @ManyToOne
-    @JoinColumn(name = "turma_id")
+   @ManyToOne
+   @JoinColumn(name = "turma_id")
     private Turma turma;
 
     public Aluno() {
     }
 
     public Aluno(Long id, String nome, Integer idade, String telefone){
-        this.id = id;
         this.nome = nome;
         this.idade = idade;
         this.telefone = telefone;
@@ -46,6 +45,10 @@ public class Aluno {
         return telefone;
     }
 
+    public Turma getTurma(){
+        return turma;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -62,5 +65,8 @@ public class Aluno {
         this.telefone = telefone;
     }
 
+    public void setTurma(Turma turma){
+        this.turma = turma;
+    }
 }
 
