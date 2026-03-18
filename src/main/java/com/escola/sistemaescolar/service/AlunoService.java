@@ -1,7 +1,9 @@
 package com.escola.sistemaescolar.service;
 
 import com.escola.sistemaescolar.model.Aluno;
+import com.escola.sistemaescolar.model.Turma;
 import com.escola.sistemaescolar.repository.AlunoRepository;
+import com.escola.sistemaescolar.repository.TurmaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,22 +11,32 @@ import java.util.List;
 @Service
 public class AlunoService {
 
-    private final AlunoRepository repository;
+    private final AlunoRepository alunoRepository;
+    private final TurmaRepository turmaRepository;
 
-    public AlunoService(AlunoRepository repository) {
-        this.repository = repository;
+    public AlunoService(AlunoRepository alunoRepository, TurmaRepository turmaRepository) {
+        this.alunoRepository = alunoRepository;
+        this.turmaRepository = turmaRepository;
     }
 
     public List<Aluno> listarAlunos() {
-        return repository.findAll();
+        return alunoRepository.findAll();
     }
 
     public Aluno salvarAluno(Aluno aluno) {
-        return repository.save(aluno);
+
+        if (aluno.getTurma() != null && aluno.getTurma().getId() != null) {
+            Turma turma = turmaRepository.findById(aluno.getTurma().getId())
+                    .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+
+            aluno.setTurma(turma);
+        }
+
+        return alunoRepository.save(aluno);
     }
 
     public void deletarAluno(Long id) {
-        repository.deleteById(id);
+        alunoRepository.deleteById(id);
     }
 }
 

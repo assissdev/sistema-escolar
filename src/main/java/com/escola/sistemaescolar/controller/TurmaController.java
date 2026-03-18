@@ -32,7 +32,7 @@ public class TurmaController {
         return turmaRepository.save(turma);
     }
 
-    @GetMapping("/teste/{id}")
+    @GetMapping("/{id}/lista-alunos")
     public List<Aluno> listarAlunosdaTurma(@PathVariable Long id){
         return alunoRepository.findByTurmaId(id);
     }
