@@ -1,5 +1,6 @@
 package com.escola.sistemaescolar.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class Turma {
     private String serie;
 
     @OneToMany(mappedBy = "turma")
+    @JsonIgnore
     private List<Aluno> alunos;
 
     public Turma() {
