@@ -18,11 +18,9 @@ public class AlunoService {
         this.alunoRepository = alunoRepository;
         this.turmaRepository = turmaRepository;
     }
-
     public List<Aluno> listarAlunos() {
         return alunoRepository.findAll();
     }
-
     public Aluno salvarAluno(Aluno aluno) {
 
         if (aluno.getTurma() != null && aluno.getTurma().getId() != null) {
@@ -31,12 +29,14 @@ public class AlunoService {
 
             aluno.setTurma(turma);
         }
-
         return alunoRepository.save(aluno);
     }
-
     public void deletarAluno(Long id) {
         alunoRepository.deleteById(id);
+    }
+    public Aluno buscarPorId(Long id) {
+        // É aqui dentro do Service que a lógica do Repository deve ficar!
+        return alunoRepository.findById(id).orElse(null);
     }
 }
 

@@ -1,8 +1,6 @@
 package com.escola.sistemaescolar.model;
 
 import jakarta.persistence.*;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
 
 @Entity
 @Table(name = "alunos")
@@ -16,57 +14,35 @@ public class Aluno {
     private Integer idade;
     private String telefone;
 
-   @ManyToOne
-   @JoinColumn(name = "turma_id")
+    @ManyToOne
+    @JoinColumn(name = "turma_id")
     private Turma turma;
 
-    public Aluno() {
-    }
+    // Construtor vazio (obrigatório para o Spring/JPA)
+    public Aluno() {}
 
-    public Aluno(Long id, String nome, Integer idade, String telefone){
+    // Construtor preenchido (sem o ID, pois ele é gerado automaticamente pelo banco)
+    public Aluno(String nome, Integer idade, String telefone, Turma turma) {
         this.nome = nome;
         this.idade = idade;
         this.telefone = telefone;
-    }
-
-    public Long getId(){
-        return id;
-    }
-
-    public String getNome(){
-        return nome;
-    }
-
-    public Integer getIdade() {
-        return idade;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public Turma getTurma(){
-        return turma;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setIdade(Integer idade) {
-        this.idade = idade;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public void setTurma(Turma turma){
         this.turma = turma;
     }
-}
 
+    // --- Getters e Setters ---
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public Integer getIdade() { return idade; }
+    public void setIdade(Integer idade) { this.idade = idade; }
+
+    public String getTelefone() { return telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
+
+    public Turma getTurma() { return turma; }
+    public void setTurma(Turma turma) { this.turma = turma; }
+}

@@ -1,39 +1,40 @@
 package com.escola.sistemaescolar.controller;
 
-import com.escola.sistemaescolar.model.Aluno;
 import com.escola.sistemaescolar.model.Turma;
-import com.escola.sistemaescolar.repository.TurmaRepository;
-import com.escola.sistemaescolar.repository.AlunoRepository;
-import com.escola.sistemaescolar.repository.TurmaRepository;
+import com.escola.sistemaescolar.service.TurmaService;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/turmas")
-
 public class TurmaController {
-    private final TurmaRepository turmaRepository;
-    private final AlunoRepository alunoRepository;
 
-    public TurmaController(TurmaRepository turmaRepository, AlunoRepository alunoRepository) {
-        this.turmaRepository = turmaRepository;
-        this.alunoRepository = alunoRepository;
+    // Injetamos apenas o Service da Turma (nada de repositórios perdidos aqui!)
+    private final TurmaService service;
+
+    public TurmaController(TurmaService service) {
+        this.service = service;
     }
 
     @GetMapping
     public List<Turma> listar() {
-        return turmaRepository.findAll();
+        return service.listarTurmas();
     }
 
     @PostMapping
     public Turma salvar(@RequestBody Turma turma) {
-        return turmaRepository.save(turma);
+        return service.salvarTurma(turma);
     }
 
-    @GetMapping("/{id}/lista-alunos")
-    public List<Aluno> listarAlunosdaTurma(@PathVariable Long id){
-        return alunoRepository.findByTurmaId(id);
+    @GetMapping("/{id}")
+    public Turma buscarPorId(@PathVariable Long id) {
+        // Agora retorna uma Turma corretamente!
+        return service.buscarPorId(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletar(@PathVariable Long id) {
+        service.deletarTurma(id);
     }
 }

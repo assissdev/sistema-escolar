@@ -6,12 +6,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "turmas")
-
 public class Turma {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
+
     private String nome;
     private String serie;
 
@@ -19,29 +19,27 @@ public class Turma {
     @JsonIgnore
     private List<Aluno> alunos;
 
-    public Turma() {
-    }
-    public Turma(Long id, String nome, String serie) {
-       this.id = id;
-       this.nome = nome;
-       this.serie = serie;
-    }
-    public Long getId() {
-        return id;
-    }
-    public String getNome() {
-        return nome;
-    }
-    public String getSerie() {
-        return serie;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public void setNome(String nome) {
+    // Construtor vazio (obrigatório para o Spring/JPA)
+    public Turma() {}
+
+    // Construtor preenchido (sem o ID, pois ele é gerado automaticamente pelo banco)
+    public Turma(String nome, String serie) {
         this.nome = nome;
-    }
-    public void setSerie(String serie) {
         this.serie = serie;
     }
+
+    // --- Getters e Setters ---
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getSerie() { return serie; }
+    public void setSerie(String serie) { this.serie = serie; }
+
+    // Faltava apenas os getters e setters da lista de alunos!
+    public List<Aluno> getAlunos() { return alunos; }
+    public void setAlunos(List<Aluno> alunos) { this.alunos = alunos; }
 }
