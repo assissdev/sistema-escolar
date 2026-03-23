@@ -1,7 +1,10 @@
 package com.escola.sistemaescolar.controller;
 
+import com.escola.sistemaescolar.dto.TurmaRequestDTO;
+import com.escola.sistemaescolar.dto.TurmaResponseDTO;
 import com.escola.sistemaescolar.model.Turma;
 import com.escola.sistemaescolar.service.TurmaService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,13 +21,13 @@ public class TurmaController {
     }
 
     @GetMapping
-    public List<Turma> listar() {
+    public List<TurmaResponseDTO> listar() {
         return service.listarTurmas();
     }
 
     @PostMapping
-    public Turma salvar(@RequestBody Turma turma) {
-        return service.salvarTurma(turma);
+    public TurmaResponseDTO salvar(@Valid @RequestBody TurmaRequestDTO dto) {
+        return service.salvarTurma(dto);
     }
 
     @GetMapping("/{id}")
