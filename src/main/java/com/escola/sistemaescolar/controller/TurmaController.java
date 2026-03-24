@@ -6,7 +6,9 @@ import com.escola.sistemaescolar.model.Turma;
 import com.escola.sistemaescolar.service.TurmaService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import java.util.List;
 
 @RestController
@@ -20,9 +22,9 @@ public class TurmaController {
         this.service = service;
     }
 
-    @GetMapping
-    public List<TurmaResponseDTO> listar() {
-        return service.listarTurmas();
+    @GetMapping ("/buscar")
+    public Page<TurmaResponseDTO> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
+        return service.listarTurmas(paginacao);
     }
 
     @PostMapping
@@ -39,5 +41,9 @@ public class TurmaController {
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id) {
         service.deletarTurma(id);
+    }
+    @PutMapping("/{id}")
+    public TurmaResponseDTO atualizar(@PathVariable Long id, @Valid @RequestBody TurmaRequestDTO dto) {
+        return service.atualizarTurma(id, dto);
     }
 }

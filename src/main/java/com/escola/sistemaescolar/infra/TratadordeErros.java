@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 
@@ -18,5 +19,11 @@ public class TratadordeErros {
 
         // Transforma a lista de erros feios do Spring na nossa lista de DTOs bonitinhos e devolve com status 400
         return ResponseEntity.badRequest().body(erros.stream().map(ErroDeValidacaoDTO::new).toList());
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Void> tratarErro404() {
+        // Devolve o status 404 (Not Found) sem nenhum corpo, bem padrão de mercado.
+        return ResponseEntity.notFound().build();
     }
 }
