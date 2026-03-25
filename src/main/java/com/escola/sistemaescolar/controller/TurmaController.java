@@ -22,7 +22,7 @@ public class TurmaController {
         this.service = service;
     }
 
-    @GetMapping ("/buscar")
+    @GetMapping
     public Page<TurmaResponseDTO> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
         return service.listarTurmas(paginacao);
     }

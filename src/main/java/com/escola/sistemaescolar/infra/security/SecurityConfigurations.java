@@ -11,23 +11,39 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
+    // 1. Injetamos o nosso filtro aqui!
+    private final SecurityFilter securityFilter;
+
+    public SecurityConfigurations(SecurityFilter securityFilter) {
+        this.securityFilter = securityFilter;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
-                // Avisa que nossa API é Stateless (não guarda sessão, usa apenas o Token)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
-                    // Libera a rota de Login para qualquer um tentar acessar
+                    // Libera o Login
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    // Libera as rotas do Swagger para a documentação funcionar
-                    req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
-                    // Bloqueia TODAS as outras rotas (precisa de Token)
+
+                    // Liberação TOTAL para o Swagger (todas as variações possíveis)
+                    req.requestMatchers(
+                            "/v3/api-docs",
+                            "/v3/api-docs/**",
+                            "/swagger-resources/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html"
+                    ).permitAll();
+
+                    // Tranca o resto
                     req.anyRequest().authenticated();
                 })
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -38,7 +54,6 @@ public class SecurityConfigurations {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Ensinamos o Spring a ler e gravar senhas criptografadas (BCrypt)
         return new BCryptPasswordEncoder();
     }
 }
