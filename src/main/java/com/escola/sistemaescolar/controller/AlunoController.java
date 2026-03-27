@@ -13,32 +13,37 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/alunos")
+public class AlunoController { // <-- OLHA A PALAVRA 'class' AQUI SALVANDO O DIA!
 
-    public AlunoController {
-    // 1. Apenas o Service entra aqui! O Controller só dá ordens para ele.
     private final AlunoService service;
 
     public AlunoController(AlunoService service) {
         this.service = service;
     }
 
-    @GetMapping
-    public List<Aluno> listar() {
-        return service.listarAlunos();
-    }
-
     @PostMapping
-    public Aluno salvar(@RequestBody Aluno aluno) {
-        return service.salvarAluno(aluno);
+    public ResponseEntity<AlunoResponseDTO> matricular(@RequestBody @Valid AlunoRequestDTO dto, UriComponentsBuilder uriBuilder) {
+        var alunoSalvo = service.matricular(dto);
+
+        // Monta o cabeçalho HTTP com a URL do novo aluno (já ajustado para getId())
+        var uri = uriBuilder.path("/alunos/{id}").buildAndExpand(alunoSalvo.id()).toUri();
+
+        return ResponseEntity.created(uri).body(alunoSalvo);
     }
 
-    @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
-        service.deletarAluno(id);
+    @GetMapping
+    public ResponseEntity<List<Aluno>> listar() {
+        return ResponseEntity.ok(service.listarAlunos());
     }
 
     @GetMapping("/{id}")
-    public Aluno buscarPorId(@PathVariable Long id){
-        return alunoRepository.findById(id).orElse(null);
+    public ResponseEntity<Aluno> buscarPorId(@PathVariable Long id){
+        return ResponseEntity.ok(service.buscarPorId(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        service.deletarAluno(id);
+        return ResponseEntity.noContent().build();
     }
 }
