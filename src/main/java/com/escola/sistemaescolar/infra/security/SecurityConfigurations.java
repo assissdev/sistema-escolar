@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
-    // 1. Injetamos o nosso filtro aqui!
+
     private final SecurityFilter securityFilter;
 
     public SecurityConfigurations(SecurityFilter securityFilter) {
@@ -30,6 +30,9 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(req -> {
                     // Libera o Login
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
+
+                    // 🔥 TEMPORÁRIO: Liberando a rota de notas para testarmos se o erro é no token ou no código
+                    req.requestMatchers(HttpMethod.POST, "/notas").permitAll();
 
                     // Liberação TOTAL para o Swagger (todas as variações possíveis)
                     req.requestMatchers(
