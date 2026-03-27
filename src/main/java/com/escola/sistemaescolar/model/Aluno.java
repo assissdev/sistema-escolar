@@ -14,18 +14,22 @@ public class Aluno {
     private Integer idade;
     private String telefone;
 
+    // Novos campos adicionados!
+    private String emailResponsavel;
+    private String matricula;
+
     @ManyToOne
     @JoinColumn(name = "turma_id")
     private Turma turma;
 
-    // Construtor vazio (obrigatório para o Spring/JPA)
     public Aluno() {}
 
-    // Construtor preenchido (sem o ID, pois ele é gerado automaticamente pelo banco)
-    public Aluno(String nome, Integer idade, String telefone, Turma turma) {
+    public Aluno(String nome, Integer idade, String telefone, String emailResponsavel, String matricula, Turma turma) {
         this.nome = nome;
         this.idade = idade;
         this.telefone = telefone;
+        this.emailResponsavel = emailResponsavel;
+        this.matricula = matricula;
         this.turma = turma;
     }
 
@@ -42,6 +46,12 @@ public class Aluno {
 
     public String getTelefone() { return telefone; }
     public void setTelefone(String telefone) { this.telefone = telefone; }
+
+    public String getEmailResponsavel() { return emailResponsavel; }
+    public void setEmailResponsavel(String emailResponsavel) { this.emailResponsavel = emailResponsavel; }
+
+    public String getMatricula() { return matricula; }
+    public void setMatricula(String matricula) { this.matricula = matricula; }
 
     public Turma getTurma() { return turma; }
     public void setTurma(Turma turma) { this.turma = turma; }
