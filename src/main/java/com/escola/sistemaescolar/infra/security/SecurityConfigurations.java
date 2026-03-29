@@ -30,7 +30,7 @@ public class SecurityConfigurations {
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
 
                     // Libera as Notas temporariamente para teste
-                    req.requestMatchers(HttpMethod.POST, "/notas").permitAll();
+                    // req.requestMatchers(HttpMethod.POST, "/notas").permitAll();
 
                     // Liberação do Swagger
                     req.requestMatchers(
