@@ -34,4 +34,16 @@ public class NotaController {
         var notas = service.listarTodas();
         return ResponseEntity.ok(notas);
     }
+    // --- PASSO 1: GET por ID ---
+    @GetMapping("/{id}")
+    public ResponseEntity<NotaResponseDTO> detalhar(@PathVariable Long id) {
+        var nota = service.buscarPorId(id);
+        return ResponseEntity.ok(nota);
+    }
+    // --- PASSO 2: PUT para Atualizar ---
+    @PutMapping("/{id}")
+    public ResponseEntity<NotaResponseDTO> atualizar(@PathVariable Long id, @RequestBody NotaRequestDTO dados) {
+        var notaAtualizada = service.atualizarNota(id, dados);
+        return ResponseEntity.ok(notaAtualizada);
+    }
 }

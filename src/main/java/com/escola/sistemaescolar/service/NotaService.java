@@ -49,4 +49,26 @@ public class NotaService {
                 .map(NotaResponseDTO::new)
                 .toList();
     }
+
+    // --- PASSO 1: Buscar por ID ---
+    public NotaResponseDTO buscarPorId(Long id) { // Verifique se o seu ID é Long, se for UUID mude aqui!
+        var nota = notaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Nota não encontrada!"));
+
+        return new NotaResponseDTO(nota);
+    }
+    // --- PASSO 2: Editar Nota ---
+    @Transactional
+    public NotaResponseDTO atualizarNota(Long id, NotaRequestDTO dados) {
+        // Busca a nota existente
+        var nota = notaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Nota não encontrada para edição!"));
+
+        // Atualiza os dados permitidos (geralmente só valor e disciplina)
+        nota.setValor(dados.valor());
+        nota.setDisciplina(dados.disciplina());
+
+        // Retorna a nota atualizada
+        return new NotaResponseDTO(nota);
+    }
 }
