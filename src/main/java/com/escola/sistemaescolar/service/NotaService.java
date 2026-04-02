@@ -5,6 +5,8 @@ import com.escola.sistemaescolar.dto.NotaResponseDTO;
 import com.escola.sistemaescolar.model.Nota;
 import com.escola.sistemaescolar.repository.AlunoRepository;
 import com.escola.sistemaescolar.repository.NotaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,34 +43,47 @@ public class NotaService {
         return new NotaResponseDTO(nota);
     }
 
-    // --- NOVO MÉTODO PARA O GET ---
-    public List<NotaResponseDTO> listarTodas() {
-        // Busca todas as notas, transforma em DTO e devolve como uma lista
-        return notaRepository.findAll()
-                .stream()
-                .map(NotaResponseDTO::new)
-                .toList();
+    // --- MÉTODO REFATORADO PARA PAGINAÇÃO ---
+    // Aceita Pageable e retorna Page (Resolve os Erros 1 e 2 do Controller)
+    public Page<NotaResponseDTO> listarTodas(Pageable paginacao) {
+        return notaRepository.findAll(paginacao)
+                .map(NotaResponseDTO::new);
     }
 
-    // --- PASSO 1: Buscar por ID ---
-    public NotaResponseDTO buscarPorId(Long id) { // Verifique se o seu ID é Long, se for UUID mude aqui!
+    public NotaResponseDTO buscarPorId(Long id) {
         var nota = notaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Nota não encontrada!"));
 
         return new NotaResponseDTO(nota);
     }
-    // --- PASSO 2: Editar Nota ---
+
     @Transactional
     public NotaResponseDTO atualizarNota(Long id, NotaRequestDTO dados) {
-        // Busca a nota existente
         var nota = notaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Nota não encontrada para edição!"));
 
-        // Atualiza os dados permitidos (geralmente só valor e disciplina)
         nota.setValor(dados.valor());
         nota.setDisciplina(dados.disciplina());
 
-        // Retorna a nota atualizada
         return new NotaResponseDTO(nota);
+    }
+
+    @Transactional
+    public void deletarNota(Long id) {
+        if (!notaRepository.existsById(id)) {
+            throw new RuntimeException("Nota não encontrada para exclusão!");
+        }
+        notaRepository.deleteById(id);
+    }
+
+    public List<NotaResponseDTO> listarPorAluno(Long alunoId) {
+        if (!alunoRepository.existsById(alunoId)) {
+            throw new RuntimeException("Aluno não encontrado para gerar o boletim!");
+        }
+
+        return notaRepository.findByAlunoId(alunoId)
+                .stream()
+                .map(NotaResponseDTO::new)
+                .toList();
     }
 }
