@@ -1,29 +1,35 @@
 package com.escola.sistemaescolar.infra;
 
-import com.escola.sistemaescolar.dto.ErroDeValidacaoDTO;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 
 @RestControllerAdvice
 public class TratadordeErros {
+
+    // Tratador do Erro 400 (Validação)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<ErroDeValidacaoDTO>> tratarErro400(MethodArgumentNotValidException exception) {
-
-        // Pega todos os erros que aconteceram na requisição
-        var erros = exception.getFieldErrors();
-
-        // Transforma a lista de erros feios do Spring na nossa lista de DTOs bonitinhos e devolve com status 400
-        return ResponseEntity.badRequest().body(erros.stream().map(ErroDeValidacaoDTO::new).toList());
+    public ResponseEntity<List<ErroValidacaoDTO>> tratarErro400(MethodArgumentNotValidException ex) {
+        List<FieldError> erros = ex.getFieldErrors();
+        return ResponseEntity.badRequest().body(erros.stream().map(ErroValidacaoDTO::new).toList());
     }
 
+    // Tratador do Erro 404 (Não Encontrado) - DEIXE APENAS ESTE AQUI!
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Void> tratarErro404() {
-        // Devolve o status 404 (Not Found) sem nenhum corpo, bem padrão de mercado.
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<String> tratarErro404(EntityNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    // DTO interno para formatar o erro 400
+    public record ErroValidacaoDTO(String campo, String mensagem) {
+        public ErroValidacaoDTO(FieldError erro) {
+            this(erro.getField(), erro.getDefaultMessage());
+        }
     }
 }

@@ -26,38 +26,30 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        // --- NOVO ESPIÃO ---
-        System.out.println("ESPIÃO - Alguém tentou acessar a URL: " + request.getRequestURI());
-        // -------------------
-
-        // 1. Pega o token do cabeçalho da requisição
+        // 1. Recupera o token do cabeçalho da requisição
         var tokenJWT = recuperarToken(request);
 
-        // --- NOSSOS ESPIÕES ---
-        System.out.println("ESPIÃO 1 - Passou pelo Filtro!");
-        System.out.println("ESPIÃO 2 - Token lido: " + tokenJWT);
-        // --
-
         if (tokenJWT != null) {
-            // 2. Lê o token e descobre quem é o dono (o e-mail do diretor)
+            // 2. Valida o token e extrai o login (e-mail do usuário)
             var subject = tokenService.getSubject(tokenJWT);
-            System.out.println("ESPIÃO 3 - Dono do Token: " + subject); // Mais um espião aqui!
 
-            // 3. Busca o diretor no banco de dados
+            // 3. Busca o usuário no banco de dados para garantir que ele ainda existe
             var usuario = repository.findByLogin(subject);
 
-            // 4. Cria o passe livre e avisa o Spring Security que o usuário está logado!
-            var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // 4. Cria o objeto de autenticação e avisa o Spring que este usuário está logado
+            if (usuario != null) {
+                var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
 
-        // 5. Continua o fluxo da requisição (se não tinha token, o Spring bloqueia logo depois daqui)
+        // 5. Segue o fluxo da requisição (se não tiver token ou for inválido, o Spring barra nas rotas protegidas)
         filterChain.doFilter(request, response);
     }
 
     private String recuperarToken(HttpServletRequest request) {
         var authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.replace("Bearer ", "");
         }
         return null;

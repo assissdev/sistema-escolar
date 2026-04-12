@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/alunos")
-public class AlunoController { // <-- OLHA A PALAVRA 'class' AQUI SALVANDO O DIA!
+public class AlunoController {
 
     private final AlunoService service;
 
@@ -25,7 +25,6 @@ public class AlunoController { // <-- OLHA A PALAVRA 'class' AQUI SALVANDO O DIA
     public ResponseEntity<AlunoResponseDTO> matricular(@RequestBody @Valid AlunoRequestDTO dto, UriComponentsBuilder uriBuilder) {
         var alunoSalvo = service.matricular(dto);
 
-        // Monta o cabeçalho HTTP com a URL do novo aluno (já ajustado para getId())
         var uri = uriBuilder.path("/alunos/{id}").buildAndExpand(alunoSalvo.id()).toUri();
 
         return ResponseEntity.created(uri).body(alunoSalvo);

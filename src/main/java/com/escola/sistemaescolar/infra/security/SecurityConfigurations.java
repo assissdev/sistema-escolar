@@ -29,11 +29,10 @@ public class SecurityConfigurations {
                     // Libera o Login
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
 
-                    // Libera as Notas temporariamente para teste
-                    // req.requestMatchers(HttpMethod.POST, "/notas").permitAll();
-
-                    // Liberação do Swagger
+                    // --- O SEGREDO ESTÁ AQUI ---
+                    // Adicionamos o "/v3/api-docs" exato, sem a barra no final!
                     req.requestMatchers(
+                            "/v3/api-docs",       // <--- Faltava esse!
                             "/v3/api-docs/**",
                             "/swagger-ui/**",
                             "/swagger-ui.html"
