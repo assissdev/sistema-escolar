@@ -4,6 +4,7 @@ import com.escola.sistemaescolar.dto.NotaRequestDTO;
 import com.escola.sistemaescolar.dto.NotaResponseDTO;
 import com.escola.sistemaescolar.service.NotaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/notas")
 @Tag(name = "Notas", description = "Operações relacionadas ao lançamento e consulta de notas dos alunos")
+// Comente esta linha temporariamente:
+@SecurityRequirement(name = "bearer-key")
 public class NotaController {
 
     private final NotaService service;

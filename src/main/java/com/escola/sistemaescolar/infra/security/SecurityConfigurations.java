@@ -29,13 +29,12 @@ public class SecurityConfigurations {
                     // Libera o Login
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
 
-                    // --- O SEGREDO ESTÁ AQUI ---
-                    // Adicionamos o "/v3/api-docs" exato, sem a barra no final!
                     req.requestMatchers(
-                            "/v3/api-docs",       // <--- Faltava esse!
+                            "/v3/api-docs",
                             "/v3/api-docs/**",
                             "/swagger-ui/**",
-                            "/swagger-ui.html"
+                            "/swagger-ui.html",
+                            "/error" // <--- O DETETIVE: Libera a rota de erro do Spring!
                     ).permitAll();
 
                     // Todo o resto precisa de autenticação
