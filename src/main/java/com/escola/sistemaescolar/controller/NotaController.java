@@ -1,5 +1,6 @@
 package com.escola.sistemaescolar.controller;
 
+import com.escola.sistemaescolar.dto.BoletimResponseDTO;
 import com.escola.sistemaescolar.dto.NotaRequestDTO;
 import com.escola.sistemaescolar.dto.NotaResponseDTO;
 import com.escola.sistemaescolar.service.NotaService;
@@ -14,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/notas")
@@ -74,11 +73,10 @@ public class NotaController {
         return ResponseEntity.noContent().build();
     }
 
-    // --- LIVRE: Qualquer usuário logado pode ver ---
     @GetMapping("/aluno/{alunoId}")
-    @Operation(summary = "Gerar boletim do aluno", description = "Retorna uma lista com todas as notas vinculadas a um aluno específico.")
-    public ResponseEntity<List<NotaResponseDTO>> listarPorAluno(@PathVariable Long alunoId) {
-        var boletim = service.listarPorAluno(alunoId);
+    @Operation(summary = "Gerar boletim do aluno", description = "Retorna as notas, a média final e o status (Aprovado/Reprovado) de um aluno.")
+    public ResponseEntity<BoletimResponseDTO> gerarBoletim(@PathVariable Long alunoId) {
+        var boletim = service.gerarBoletim(alunoId);
         return ResponseEntity.ok(boletim);
     }
 }

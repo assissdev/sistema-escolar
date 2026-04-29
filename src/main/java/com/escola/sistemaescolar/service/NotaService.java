@@ -1,5 +1,6 @@
 package com.escola.sistemaescolar.service;
 
+import com.escola.sistemaescolar.dto.BoletimResponseDTO;
 import com.escola.sistemaescolar.dto.NotaRequestDTO;
 import com.escola.sistemaescolar.dto.NotaResponseDTO;
 import com.escola.sistemaescolar.model.Nota;
@@ -73,14 +74,31 @@ public class NotaService {
         notaRepository.deleteById(id);
     }
 
-    public List<NotaResponseDTO> listarPorAluno(Long alunoId) {
+    // --- NOSSO NOVO MÉTODO INTELIGENTE ---
+    public BoletimResponseDTO gerarBoletim(Long alunoId) {
+        // 1. Verifica se o aluno existe
         if (!alunoRepository.existsById(alunoId)) {
             throw new EntityNotFoundException("Aluno não encontrado para gerar o boletim!");
         }
 
-        return notaRepository.findByAlunoId(alunoId)
-                .stream()
+        // 2. Busca as notas no banco de dados
+        var notasDoAluno = notaRepository.findByAlunoId(alunoId);
+
+        // 3. Converte as notas para DTO para mostrar na tela
+        List<NotaResponseDTO> notasDTO = notasDoAluno.stream()
                 .map(NotaResponseDTO::new)
                 .toList();
+
+        // 4. Calcula a média matemática
+        double media = notasDoAluno.stream()
+                .mapToDouble(Nota::getValor)
+                .average()
+                .orElse(0.0);
+
+        // 5. Aplica a Regra de Negócio (Média >= 7)
+        String status = media >= 7.0 ? "APROVADO" : "REPROVADO";
+
+        // 6. Retorna o boletim completo
+        return new BoletimResponseDTO(alunoId, notasDTO, media, status);
     }
 }
